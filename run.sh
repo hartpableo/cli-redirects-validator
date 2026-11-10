@@ -91,9 +91,9 @@ while IFS=',' read -r ORIGINAL_URL REDIRECT_URL || [[ -n "$ORIGINAL_URL" ]]; do
 		FAILED_URLS+=("${ORIGINAL_URL} | ${REDIRECT_URL} | ${FINAL_URL}")
 	fi
 
-#	SLEEP_TIME=$(awk "BEGIN {srand(); print 1 + rand() * 2}")
-#	echo "Sleeping for ${SLEEP_TIME}s to prevent spamming..."
-#	sleep "$SLEEP_TIME"
+	SLEEP_TIME=$(awk "BEGIN {srand(); print 1 + rand() * 2}")
+	echo "Sleeping for ${SLEEP_TIME}s to prevent spamming..."
+	sleep "$SLEEP_TIME"
 	echo "-------------------------------"
 	echo ""
 done < "$CSV_FILE"

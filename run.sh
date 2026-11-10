@@ -23,6 +23,10 @@ USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 CONN_TIMEOUT=5
 MAX_TIME=10
 
+# User input
+BASIC_AUTH_USER=$2
+BASIC_AUTH_PASS=$3
+
 # Helper function to check if URL is valid
 url_is_valid() {
 	local regex='^(https?://)?([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,})(/[^[:space:]]*)?$'
@@ -67,6 +71,7 @@ while IFS=',' read -r ORIGINAL_URL REDIRECT_URL || [[ -n "$ORIGINAL_URL" ]]; do
 	echo "Checking ${ORIGINAL_URL}"
 
 	CURL_OUTPUT=$(curl -Ls -o /dev/null \
+	  					-u "${BASIC_AUTH_USER}:${BASIC_AUTH_PASS}" \
 							-w "%{url_effective}|%{http_code}" \
 							-A "$USER_AGENT" \
 							--connect-timeout "$CONN_TIMEOUT" \
@@ -83,8 +88,8 @@ while IFS=',' read -r ORIGINAL_URL REDIRECT_URL || [[ -n "$ORIGINAL_URL" ]]; do
 			echo "Good match with expected final URL: ${REDIRECT_URL}"
 			SUCCESSFUL_URLS+=("${ORIGINAL_URL} | ${FINAL_URL}")
 		else
-			echo "Good match but final URL is not ok: ${REDIRECT_URL}"
-			NOT_FOUND_URLS+=("${ORIGINAL_URL} | ${FINAL_URL}")
+			echo "Good match but final URL is not ok (${STATUS_CODE}): ${REDIRECT_URL}"
+			NOT_FOUND_URLS+=("${STATUS_CODE} | ${ORIGINAL_URL} | ${FINAL_URL}")
 		fi
 	else
 		echo "Not a good match: ${FINAL_URL} <> ${REDIRECT_URL}"
